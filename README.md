@@ -28,8 +28,8 @@ Our GitHub action prebuilds a binary for each supported platform. We release dif
 
 ## Develop requirements
 
-- Install the latest `Rust`
-- Install `Node.js@10+` which fully supported `Node-API`
+- Install `rustc ~= 1.88`. We recommend using [`rustup`](https://rust-lang.org/tools/install/) to install it.
+- Install `node >= 22.21`. We recommend using [Node version manager (`nvm`)](https://github.com/nvm-sh/nvm).
 
 ## Test locally
 
