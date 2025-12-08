@@ -12,11 +12,11 @@ yarn add @qiskit/mdx-link-extract
 
 ### Build
 
-After running `npm run build`, you should see `package-template.[darwin|win32|linux].node` in the project root. This is the native addon built from [lib.rs](./src/lib.rs).
+After running `yarn build`, you should see `package-template.[darwin|win32|linux].node` in the project root. This is the native addon built from [lib.rs](./src/lib.rs).
 
 ### Test
 
-With [ava](https://github.com/avajs/ava), run `npm run test` to test the native addon. You can also switch to another testing framework if you want.
+With [ava](https://github.com/avajs/ava), run `yarn test` to test the native addon. You can also switch to another testing framework if you want.
 
 ### CI
 
@@ -31,23 +31,21 @@ Our GitHub action prebuilds a binary for each supported platform. We release dif
 - Install the latest `Rust`
 - Install `Node.js@10+` which fully supported `Node-API`
 
-## Test in local
+## Test locally
 
-- npm ci
-- npm run build
-- npm run test
+- `nvm use 22.21.1`
+- `yarn install`
+- `yarn build`
+- `yarn test`
 
-And you will see:
+And you should see:
 
-```bash
-$ ava --verbose
+```
 
   ✔ sync function from native code
-  ✔ sleep function from native code (201ms)
   ─
 
-  2 tests passed
-✨  Done in 1.12s.
+  1 test passed
 ```
 
 ## Release package
