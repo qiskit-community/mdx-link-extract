@@ -28,7 +28,7 @@ You should see all the tests pass.
 
 ## Publishing
 
-Our GitHub action prebuilds a binary for each supported platform. We release different `npm` packages for each platform and add them to `optionalDependencies` before releasing the major package to npm. The package manager will choose which native package to download from the registry automatically.
+Our GitHub Action prebuilds a binary for each supported platform. We release different `npm` packages for each platform and add them to `optionalDependencies` before releasing the major package to npm. The package manager will choose which native package to download from the registry automatically.
 
 ### Release package
 
