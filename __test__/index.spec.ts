@@ -84,6 +84,6 @@ test('extractLinks: gfm inside link', (t) => {
 test('extractLinks: appropriate jsx error message', (t) => {
   const error = t.throws(() => extractLinks('<Admonition>'))
   // TBD:
-  t.is(error.name, 'appropriate name')
-  t.is(error.message, 'appropriate message')
+  t.is(error.name, 'Error')
+  t.is(error.message, '1:13: Expected a closing tag for `<Admonition>` (1:1) (markdown-rs:end-tag-mismatch)')
 })
