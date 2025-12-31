@@ -1,10 +1,10 @@
 #![deny(clippy::all)]
 
+use napi::Error;
 use napi_derive::napi;
 
-/// This is just a placeholder to check the tests are working. We'll replace
-/// this with code soon.
+/// Extract links from a markdown string
 #[napi]
-pub fn plus_100(input: u32) -> u32 {
-  input + 100
+pub fn extract_links(markdown: String) -> Result<Vec<String>, Error> {
+  Ok(vec![])
 }
