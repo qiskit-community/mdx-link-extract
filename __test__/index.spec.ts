@@ -64,9 +64,9 @@ test('extractLinks: nested in jsx', (t) => {
 })
 
 test('extractLinks: multiple links', (t) => {
-  const result = extractLinks('[Hello](/path1) [there!](/path2)').sort();
-  const expected = ['/path1', '/path2'].sort();
-  t.deepEqual(result, expected);
+  const result = extractLinks('[Hello](/path1) [there!](/path2)').sort()
+  const expected = ['/path1', '/path2'].sort()
+  t.deepEqual(result, expected)
 })
 
 test('extractLinks: duplicate links', (t) => {
