@@ -81,9 +81,30 @@ test('extractLinks: gfm inside link', (t) => {
   t.deepEqual(extractLinks('Hello [~~there!~~](/path "Some alt text")'), ['/path'])
 })
 
+test('extractLinks: link inside table', (t) => {
+  const links = extractLinks(
+    dedent(`
+    | a | b |
+    |:--|--:|
+    | thing | [a link](/path) |
+    `),
+  )
+  t.deepEqual(links, ['/path'])
+})
+
+test('extractLinks: gfm footnotes', (t) => {
+  const links = extractLinks(
+    dedent(`
+    Here's a footnote[^1]
+
+    [^1]: And the [reference](/path)
+    `),
+  )
+  t.deepEqual(links, ['/path'])
+})
+
 test('extractLinks: appropriate jsx error message', (t) => {
   const error = t.throws(() => extractLinks('<Admonition>'))
-  // TBD:
   t.is(error.name, 'Error')
   t.is(error.message, '1:13: Expected a closing tag for `<Admonition>` (1:1) (markdown-rs:end-tag-mismatch)')
 })
