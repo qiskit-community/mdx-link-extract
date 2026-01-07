@@ -5,6 +5,17 @@ use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use napi::Error;
 use napi_derive::napi;
 use std::collections::HashSet;
+use std::fs;
+
+#[napi]
+pub fn extract_links_from_file(file_path: String) -> Result<Vec<String>, Error> {
+  let markdown = match fs::read_to_string(file_path) {
+    Ok(s) => s,
+    Err(e) => return Err(Error::from_reason(e.to_string())),
+  };
+
+  extract_links(markdown)
+}
 
 /// Extract links from a markdown string. Supports GitHub-flavored markdown
 /// (gfm), math, and JSX.

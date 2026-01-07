@@ -5,3 +5,5 @@
  * (gfm), math, and JSX.
  */
 export declare function extractLinks(markdown: string): Array<string>
+
+export declare function extractLinksFromFile(filePath: string): Array<string>
