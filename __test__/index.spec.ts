@@ -118,3 +118,30 @@ test('extractLinksFromFile: notebook', (t) => {
   const links = extractLinksFromFile('__test__/fixtures/markdown.ipynb').sort()
   t.deepEqual(links, ['/path', '/path2'].sort())
 })
+
+test('extractLinksFromFile: markdown file not found', (t) => {
+  const error = t.throws(() => extractLinksFromFile('__test__/fixtures/file_that_does_not_exist.md'))
+  t.is(error.name, 'Error')
+  t.is(
+    error.message,
+    'Could not read "__test__/fixtures/file_that_does_not_exist.md": No such file or directory (os error 2)',
+  )
+})
+
+test('extractLinksFromFile: invalid notebook (not JSON)', (t) => {
+  const error = t.throws(() => extractLinksFromFile('__test__/fixtures/invalid-notebook-json.ipynb'))
+  t.is(error.name, 'Error')
+  t.is(
+    error.message,
+    'Could not read "__test__/fixtures/invalid-notebook-json.ipynb": trailing comma at line 7 column 7',
+  )
+})
+
+test('extractLinksFromFile: invalid notebook (bad schema)', (t) => {
+  const error = t.throws(() => extractLinksFromFile('__test__/fixtures/invalid-notebook-schema.ipynb'))
+  t.is(error.name, 'Error')
+  t.is(
+    error.message,
+    'Could not read "__test__/fixtures/invalid-notebook-schema.ipynb": missing field `source` at line 10 column 5',
+  )
+})

@@ -11,18 +11,23 @@ use crate::notebook::extract_markdown_from_notebook_source;
 
 mod notebook;
 
+fn file_read_error(path: String, reason: String) -> Result<Vec<String>, Error> {
+  let message = format!("Could not read \"{}\": {}", path, reason);
+  Err(Error::from_reason(message))
+}
+
 #[napi]
 pub fn extract_links_from_file(file_path: String) -> Result<Vec<String>, Error> {
   let is_notebook = file_path.ends_with(".ipynb");
-  let source = match fs::read_to_string(file_path) {
+  let source = match fs::read_to_string(&file_path) {
     Ok(s) => s,
-    Err(e) => return Err(Error::from_reason(e.to_string())),
+    Err(e) => return file_read_error(file_path, e.to_string()),
   };
 
   let markdown = if is_notebook {
     match extract_markdown_from_notebook_source(source) {
       Ok(md) => md,
-      Err(reason) => return Err(Error::from_reason(reason)),
+      Err(e) => return file_read_error(file_path, e.to_string()),
     }
   } else {
     source
