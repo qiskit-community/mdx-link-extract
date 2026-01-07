@@ -7,11 +7,25 @@ use napi_derive::napi;
 use std::collections::HashSet;
 use std::fs;
 
+use crate::notebook::extract_markdown_from_notebook_source;
+
+mod notebook;
+
 #[napi]
 pub fn extract_links_from_file(file_path: String) -> Result<Vec<String>, Error> {
-  let markdown = match fs::read_to_string(file_path) {
+  let is_notebook = file_path.ends_with(".ipynb");
+  let source = match fs::read_to_string(file_path) {
     Ok(s) => s,
     Err(e) => return Err(Error::from_reason(e.to_string())),
+  };
+
+  let markdown = if is_notebook {
+    match extract_markdown_from_notebook_source(source) {
+      Ok(md) => md,
+      Err(reason) => return Err(Error::from_reason(reason)),
+    }
+  } else {
+    source
   };
 
   extract_links(markdown)
