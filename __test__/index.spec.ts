@@ -115,6 +115,6 @@ test('extractLinksFromFile: mdx file', (t) => {
 })
 
 test('extractLinksFromFile: notebook', (t) => {
-  const links = extractLinksFromFile('__test__/fixtures/markdown.mdx')
-  t.deepEqual(links, ['/path', '/path2'])
+  const links = extractLinksFromFile('__test__/fixtures/markdown.ipynb').sort()
+  t.deepEqual(links, ['/path', '/path2'].sort())
 })
