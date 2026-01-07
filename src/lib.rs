@@ -5,6 +5,8 @@ use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use napi::Error;
 use napi_derive::napi;
 use std::collections::HashSet;
+use std::ffi::OsStr;
+use std::path::Path;
 use tokio::fs;
 
 use crate::notebook::extract_markdown_from_notebook_source;
@@ -18,8 +20,9 @@ fn file_read_error(path: String, reason: String) -> Result<Vec<String>, Error> {
 
 #[napi]
 pub async fn extract_links_from_file(file_path: String) -> Result<Vec<String>, Error> {
-  let is_notebook = file_path.ends_with(".ipynb");
-  let source = match fs::read_to_string(&file_path).await {
+  let path = Path::new(&file_path);
+  let is_notebook = path.extension() == Some(OsStr::new("ipynb"));
+  let source = match fs::read_to_string(&path).await {
     Ok(s) => s,
     Err(e) => return file_read_error(file_path, e.to_string()),
   };
