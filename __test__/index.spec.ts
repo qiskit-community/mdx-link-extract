@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import { extractLinks } from '../index'
+import { extractLinks, extractLinksFromFile } from '../index'
 
 const dedent = (s: string) => s.replace('\n    ', '')
 
@@ -107,4 +107,14 @@ test('extractLinks: appropriate jsx error message', (t) => {
   const error = t.throws(() => extractLinks('<Admonition>'))
   t.is(error.name, 'Error')
   t.is(error.message, '1:13: Expected a closing tag for `<Admonition>` (1:1) (markdown-rs:end-tag-mismatch)')
+})
+
+test('extractLinksFromFile: mdx file', (t) => {
+  const links = extractLinksFromFile('__test__/fixtures/markdown.mdx')
+  t.deepEqual(links, ['/path'])
+})
+
+test('extractLinksFromFile: notebook', (t) => {
+  const links = extractLinksFromFile('__test__/fixtures/markdown.mdx')
+  t.deepEqual(links, ['/path', '/path2'])
 })
