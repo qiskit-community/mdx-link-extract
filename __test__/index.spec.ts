@@ -109,18 +109,20 @@ test('extractLinks: appropriate jsx error message', (t) => {
   t.is(error.message, '1:13: Expected a closing tag for `<Admonition>` (1:1) (markdown-rs:end-tag-mismatch)')
 })
 
-test('extractLinksFromFile: mdx file', (t) => {
-  const links = extractLinksFromFile('__test__/fixtures/markdown.mdx')
+test('extractLinksFromFile: mdx file', async (t) => {
+  const links = await extractLinksFromFile('__test__/fixtures/markdown.mdx')
   t.deepEqual(links, ['/path'])
 })
 
-test('extractLinksFromFile: notebook', (t) => {
-  const links = extractLinksFromFile('__test__/fixtures/markdown.ipynb').sort()
+test('extractLinksFromFile: notebook', async (t) => {
+  const links = (await extractLinksFromFile('__test__/fixtures/markdown.ipynb')).sort()
   t.deepEqual(links, ['/path', '/path2'].sort())
 })
 
-test('extractLinksFromFile: markdown file not found', (t) => {
-  const error = t.throws(() => extractLinksFromFile('__test__/fixtures/file_that_does_not_exist.md'))
+test('extractLinksFromFile: markdown file not found', async (t) => {
+  const error = await t.throwsAsync(
+    async () => await extractLinksFromFile('__test__/fixtures/file_that_does_not_exist.md'),
+  )
   t.is(error.name, 'Error')
   t.is(
     error.message,
@@ -128,8 +130,10 @@ test('extractLinksFromFile: markdown file not found', (t) => {
   )
 })
 
-test('extractLinksFromFile: invalid notebook (not JSON)', (t) => {
-  const error = t.throws(() => extractLinksFromFile('__test__/fixtures/invalid-notebook-json.ipynb'))
+test('extractLinksFromFile: invalid notebook (not JSON)', async (t) => {
+  const error = await t.throwsAsync(
+    async () => await extractLinksFromFile('__test__/fixtures/invalid-notebook-json.ipynb'),
+  )
   t.is(error.name, 'Error')
   t.is(
     error.message,
@@ -137,8 +141,10 @@ test('extractLinksFromFile: invalid notebook (not JSON)', (t) => {
   )
 })
 
-test('extractLinksFromFile: invalid notebook (bad schema)', (t) => {
-  const error = t.throws(() => extractLinksFromFile('__test__/fixtures/invalid-notebook-schema.ipynb'))
+test('extractLinksFromFile: invalid notebook (bad schema)', async (t) => {
+  const error = await t.throwsAsync(
+    async () => await extractLinksFromFile('__test__/fixtures/invalid-notebook-schema.ipynb'),
+  )
   t.is(error.name, 'Error')
   t.is(
     error.message,

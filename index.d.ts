@@ -6,4 +6,4 @@
  */
 export declare function extractLinks(markdown: string): Array<string>
 
-export declare function extractLinksFromFile(filePath: string): Array<string>
+export declare function extractLinksFromFile(filePath: string): Promise<Array<string>>
