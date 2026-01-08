@@ -124,10 +124,13 @@ test('extractLinksFromFile: markdown file not found', async (t) => {
     async () => await extractLinksFromFile('__test__/fixtures/file_that_does_not_exist.md'),
   )
   t.is(error.name, 'Error')
-  t.is(
-    error.message,
+
+  // The error message changes depending on OS, but both are acceptable
+  const acceptableMessages = [
     'Could not read "__test__/fixtures/file_that_does_not_exist.md": No such file or directory (os error 2)',
-  )
+    'Could not read "__test__/fixtures/file_that_does_not_exist.md": The system cannot find the file specified. (os error 2)',
+  ]
+  t.assert(acceptableMessages.includes(error.message))
 })
 
 test('extractLinksFromFile: invalid notebook (not JSON)', async (t) => {
