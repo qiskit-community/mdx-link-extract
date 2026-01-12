@@ -1,5 +1,3 @@
-#![deny(clippy::all)]
-
 use markdown::mdast::{AttributeContent, AttributeValue, MdxJsxTextElement};
 use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use napi::Error;
@@ -34,6 +32,18 @@ pub async fn extract_links_from_file(file_path: String) -> Result<Vec<String>, E
   };
 
   extract_links(markdown)
+}
+
+use crate::anchors::extract_anchors_from_ref;
+
+mod anchors;
+
+/// Extract anchors from a markdown string. Anchors are either:
+///  * slugified headings, deduplicated if the same heading appears more than once
+///  * `id` props of HTML tags. These are not deduplicated as they should be unique per file
+#[napi]
+pub fn extract_anchors(markdown: String) -> Vec<String> {
+  extract_anchors_from_ref(&markdown)
 }
 
 /// Extract links from a markdown string. Supports GitHub-flavored markdown

@@ -572,5 +572,6 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
+module.exports.extractAnchors = nativeBinding.extractAnchors
 module.exports.extractLinks = nativeBinding.extractLinks
 module.exports.extractLinksFromFile = nativeBinding.extractLinksFromFile
