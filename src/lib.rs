@@ -12,7 +12,7 @@ use crate::notebook::extract_markdown_from_notebook_source;
 mod notebook;
 
 fn file_read_error(path: String, reason: String) -> Result<Vec<String>, Error> {
-  let message = format!("Could not read \"{}\": {}", path, reason);
+  let message = format!("Could not read \"{path}\": {reason}");
   Err(Error::from_reason(message))
 }
 
