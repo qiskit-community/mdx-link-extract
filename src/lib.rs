@@ -1,5 +1,3 @@
-#![deny(clippy::all)]
-
 use markdown::mdast::{AttributeContent, AttributeValue, MdxJsxTextElement};
 use markdown::{mdast::Node, to_mdast, Constructs, ParseOptions};
 use napi::Error;

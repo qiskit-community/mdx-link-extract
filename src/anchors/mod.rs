@@ -1,7 +1,7 @@
 use fancy_regex::Regex;
 use std::collections::HashMap;
 
-pub fn extract_anchors_from_ref(markdown: &String) -> Vec<String> {
+pub fn extract_anchors_from_ref(markdown: &str) -> Vec<String> {
   let heading_regex = Regex::new("^\\s*#{1,6}\\s+(.+?)\\s*$").unwrap();
   let id_regex = Regex::new("(?<=id=\")(.+?)(?=\")").unwrap();
 
