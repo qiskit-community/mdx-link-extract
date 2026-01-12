@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import { extractLinks, extractLinksFromFile } from '../index'
+import { extractLinks, extractAnchors, extractLinksFromFile } from '../index'
 
 const dedent = (s: string) => s.replace('\n    ', '')
 
@@ -153,4 +153,35 @@ test('extractLinksFromFile: invalid notebook (bad schema)', async (t) => {
     error.message,
     'Could not read "__test__/fixtures/invalid-notebook-schema.ipynb": missing field `source` at line 10 column 5',
   )
+})
+
+test('extractAnchors: no anchors', (t) => {
+  t.deepEqual(extractAnchors(''), [])
+})
+
+test('extractAnchors: simple heading', (t) => {
+  t.deepEqual(extractAnchors('# My heading'), ['#my-heading'])
+})
+
+test('extractAnchors: duplicate headings', (t) => {
+  t.deepEqual(
+    extractAnchors('# My heading\n\n## My heading\n\n### My heading').sort(),
+    ['#my-heading', '#my-heading-1', '#my-heading-2'].sort(),
+  )
+})
+
+test('extractAnchors: markdown in headings', (t) => {
+  t.deepEqual(extractAnchors('# My **heading**'), ['#my-**heading**'])
+})
+
+test('extractAnchors: forbidden characters', (t) => {
+  t.deepEqual(extractAnchors('## A heading with crazy punctuation.,;:!?`\()"\\'), ['#a-heading-with-crazy-punctuation'])
+})
+
+test('extractAnchors: id tags', (t) => {
+  t.deepEqual(extractAnchors('<id="thing">'), ['#thing'])
+})
+
+test('extractAnchors: duplicate id tags', (t) => {
+  t.deepEqual(extractAnchors('<id="thing">\n\n<id="thing">'), ['#thing'])
 })
