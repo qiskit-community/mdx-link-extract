@@ -8,9 +8,17 @@
 export declare function extractAnchors(markdown: string): Array<string>
 
 /**
+ * Extracts links and anchors from an MDX file or notebook containing MDX.
+ *
+ * Example:
+ * ```ts
+ * const [links, anchors] = await extractFromFile("notebook.ipynb");
+ * ```
+ */
+export declare function extractFromFile(filePath: string): Promise<[string[], string[]]>
+
+/**
  * Extract links from a markdown string. Supports GitHub-flavored markdown
  * (gfm), math, and JSX.
  */
 export declare function extractLinks(markdown: string): Array<string>
-
-export declare function extractLinksFromFile(filePath: string): Promise<Array<string>>
