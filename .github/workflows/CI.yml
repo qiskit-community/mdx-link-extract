@@ -221,6 +221,7 @@ jobs:
           run: yarn test
   publish:
     name: Publish
+    environment: Publish
     runs-on: ubuntu-latest
     permissions:
       contents: write
