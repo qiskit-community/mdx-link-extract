@@ -221,7 +221,9 @@ jobs:
           run: yarn test
   publish:
     name: Publish
+    environment: Publish
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
     permissions:
       contents: write
       id-token: write
