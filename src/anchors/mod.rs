@@ -31,7 +31,8 @@ pub fn extract_anchors_from_ref(markdown: &str) -> Vec<String> {
 }
 
 fn heading_to_anchor(heading: &str) -> String {
-  heading
+  let heading_without_links = remove_markdown_links(heading);
+  heading_without_links
     .trim()
     .to_lowercase()
     .chars()
@@ -59,4 +60,13 @@ fn get_first_capture<'a>(s: &'a str, r: &Regex) -> Option<&'a str> {
     return None;
   };
   Some(captures.get(1)?.as_str())
+}
+
+/// Extracts the text inside every markdown link found in `markdown`.
+///
+/// Example:
+/// "My [heading with links](/test)" -> "My heading with links"
+fn remove_markdown_links(markdown: &str) -> String {
+  let re = Regex::new(r"\[([^\[\]]+)\]\(([^)]+)\)").unwrap();
+  re.replace_all(markdown, "$1").to_string()
 }

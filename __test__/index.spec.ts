@@ -172,7 +172,7 @@ test('extractAnchors: markdown in headings', (t) => {
 })
 
 test('extractAnchors: forbidden characters', (t) => {
-  t.deepEqual(extractAnchors('## A heading with crazy punctuation.,;:!?`\()"\\'), ['#a-heading-with-crazy-punctuation'])
+  t.deepEqual(extractAnchors('## A heading with crazy punctuation.,;:!?`()"\\'), ['#a-heading-with-crazy-punctuation'])
 })
 
 test('extractAnchors: id tags', (t) => {
@@ -181,4 +181,8 @@ test('extractAnchors: id tags', (t) => {
 
 test('extractAnchors: duplicate id tags', (t) => {
   t.deepEqual(extractAnchors('<id="thing">\n\n<id="thing">'), ['#thing'])
+})
+
+test('extractAnchors: headings with links', (t) => {
+  t.deepEqual(extractAnchors('# My [heading](/test1) with [multiple links](/test2)'), ['#my-heading-with-multiple-links'])
 })
