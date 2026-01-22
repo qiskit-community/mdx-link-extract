@@ -67,6 +67,6 @@ fn get_first_capture<'a>(s: &'a str, r: &Regex) -> Option<&'a str> {
 /// Example:
 /// "My [heading with links](/test)" -> "My heading with links"
 fn unwrap_markdown_links(markdown: &str) -> String {
-    let re = Regex::new(r"\[([^\[\]]+)\]\(([^)]+)\)").unwrap();
-    re.replace_all(markdown, "$1").to_string()
+  let re = Regex::new(r"\[([^\[\]]+)\]\(([^)]+)\)").unwrap();
+  re.replace_all(markdown, "$1").to_string()
 }
