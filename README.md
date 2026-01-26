@@ -32,14 +32,22 @@ Our GitHub Action prebuilds a binary for each supported platform. We release dif
 
 ### Release package
 
-When you want to release the package:
+The process isn't ideal for our workflow, we inherited it from the `napi-rs` template. The release action looks for a new commit on main that starts with a valid semver number (such as `4.12.3`). Since we only allow merge commits, this means we need to merge a PR with the semver as a title. We also need to update the `package.json` in the same PR.
 
-```bash
-npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease [--preid=<prerelease-id>] | from-git]
+Follow these steps for a foolproof way to make a new release:
 
-git push
-```
+1. Make a new branch from up-to-date `main`.
+   ```sh
+   git switch -c release && git reset --hard origin/main && git pull origin main
+   ```
+2. Run the following command to update `package.json` and make a commit:
 
-GitHub actions will do the rest job for you.
+   ```bash
+   npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease [--preid=<prerelease-id>] | from-git]
+   ```
+
+3. Run `gh pr create` and accept the defaults. This will create a PR with the correct title. Submit the PR.
+4. Once CI has passed and been approved, merge the PR. This will trigger a release.
+
 
 > WARN: Don't run `npm publish` manually.
