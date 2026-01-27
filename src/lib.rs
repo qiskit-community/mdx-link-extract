@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use napi::Error;
 use napi_derive::napi;
 use tokio::fs;
@@ -7,6 +9,7 @@ use crate::notebook::extract_markdown_from_notebook_source;
 
 mod anchors;
 mod links;
+mod mdx;
 mod notebook;
 
 fn file_read_error(path: String, reason: String) -> Error {
@@ -38,10 +41,15 @@ pub async fn extract_from_file(file_path: String) -> Result<Vec<Vec<String>>, Er
   };
 
   let anchors = extract_anchors_from_ref(&markdown);
-  match extract_links(markdown) {
-    Ok(links) => Ok(vec![links, anchors]),
-    Err(e) => Err(Error::from_reason(e.to_string())),
-  }
+
+  let ast_root = mdx::parse_mdx(markdown)?;
+
+  let mut links = HashSet::<&String>::default();
+  mdx::walk_ast(&ast_root, &mut |node| {
+    links::extract_from_node(node, &mut links);
+  });
+
+  Ok(vec![links.into_iter().cloned().collect(), anchors])
 }
 
 /// Extract anchors from a markdown string. Anchors are either:
@@ -56,5 +64,10 @@ pub fn extract_anchors(markdown: String) -> Vec<String> {
 /// (gfm), math, and JSX.
 #[napi]
 pub fn extract_links(markdown: String) -> Result<Vec<String>, Error> {
-  links::extract_links(markdown)
+  let ast_root = mdx::parse_mdx(markdown)?;
+  let mut links = HashSet::<&String>::default();
+  mdx::walk_ast(&ast_root, &mut |node| {
+    links::extract_from_node(node, &mut links);
+  });
+  Ok(links.into_iter().cloned().collect())
 }
