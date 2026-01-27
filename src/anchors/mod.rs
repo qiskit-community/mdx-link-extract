@@ -63,6 +63,7 @@ pub fn get_text<'a>(node: &'a Node, s: &mut String) {
   let maybe_text = match node {
     Node::Text(text) => Some(&text.value),
     Node::InlineCode(text) => Some(&text.value),
+    Node::InlineMath(text) => Some(&text.value),
     _ => None,
   };
   if let Some(text) = maybe_text {
@@ -95,6 +96,8 @@ fn heading_to_anchor(heading: String) -> String {
       ')' => None,
       '"' => None,
       '\'' => None,
+      '{' => None,
+      '}' => None,
       x => Some(x),
     })
     .collect()

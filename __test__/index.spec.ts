@@ -175,6 +175,16 @@ test('extractAnchors: code in headings', (t) => {
   t.deepEqual(extractAnchors('# My `heading`'), ['#my-heading'])
 })
 
+test('extractAnchors: math in headings', (t) => {
+  t.deepEqual(extractAnchors('## Gates $\\rightarrow$ quantum gates'), ['#gates-rightarrow-quantum-gates'])
+  t.deepEqual(
+    extractAnchors(
+      '### Template circuits for calculating matrix elements of $\\tilde{S}$ and $\\tilde{H}$ via Hadamard test',
+    ),
+    ['#template-circuits-for-calculating-matrix-elements-of-tildes-and-tildeh-via-hadamard-test'],
+  )
+})
+
 test('extractAnchors: mdx in headings', (t) => {
   t.deepEqual(extractAnchors('# My <B>heading</B>`'), ['#my-heading'])
 })
