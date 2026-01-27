@@ -167,8 +167,26 @@ test('extractAnchors: duplicate headings', (t) => {
   )
 })
 
-test('extractAnchors: markdown in headings', (t) => {
-  t.deepEqual(extractAnchors('# My **heading**'), ['#my-**heading**'])
+test('extractAnchors: bold text in headings', (t) => {
+  t.deepEqual(extractAnchors('# My **heading**'), ['#my-heading'])
+})
+
+test('extractAnchors: code in headings', (t) => {
+  t.deepEqual(extractAnchors('# My `heading`'), ['#my-heading'])
+})
+
+test('extractAnchors: math in headings', (t) => {
+  t.deepEqual(extractAnchors('## Gates $\\rightarrow$ quantum gates'), ['#gates-rightarrow-quantum-gates'])
+  t.deepEqual(
+    extractAnchors(
+      '### Template circuits for calculating matrix elements of $\\tilde{S}$ and $\\tilde{H}$ via Hadamard test',
+    ),
+    ['#template-circuits-for-calculating-matrix-elements-of-tildes-and-tildeh-via-hadamard-test'],
+  )
+})
+
+test('extractAnchors: mdx in headings', (t) => {
+  t.deepEqual(extractAnchors('# My <B>heading</B>`'), ['#my-heading'])
 })
 
 test('extractAnchors: forbidden characters', (t) => {
@@ -176,13 +194,15 @@ test('extractAnchors: forbidden characters', (t) => {
 })
 
 test('extractAnchors: id tags', (t) => {
-  t.deepEqual(extractAnchors('<id="thing">'), ['#thing'])
+  t.deepEqual(extractAnchors('<span id="thing" />'), ['#thing'])
 })
 
 test('extractAnchors: duplicate id tags', (t) => {
-  t.deepEqual(extractAnchors('<id="thing">\n\n<id="thing">'), ['#thing'])
+  t.deepEqual(extractAnchors('<span id="thing" />\n\n<span id="thing" />'), ['#thing'])
 })
 
 test('extractAnchors: headings with links', (t) => {
-  t.deepEqual(extractAnchors('# My [heading](/test1) with [multiple links](/test2)'), ['#my-heading-with-multiple-links'])
+  t.deepEqual(extractAnchors('# My [heading](/test1) with [multiple links](/test2)'), [
+    '#my-heading-with-multiple-links',
+  ])
 })

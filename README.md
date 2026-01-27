@@ -49,5 +49,4 @@ Follow these steps for a foolproof way to make a new release:
 3. Run `gh pr create` and accept the defaults. This will create a PR with the correct title. Submit the PR.
 4. Once CI has passed and been approved, merge the PR. This will trigger a release.
 
-
 > WARN: Don't run `npm publish` manually.
