@@ -1,24 +1,68 @@
-use fancy_regex::Regex;
+use markdown::mdast::{AttributeContent, AttributeValue, Heading, Node};
 use std::collections::HashMap;
 
-pub fn extract_anchors_from_ref(markdown: &str) -> Vec<String> {
-  let heading_regex = Regex::new("^\\s*#{1,6}\\s+(.+?)\\s*$").unwrap();
-  let id_regex = Regex::new("(?<=id=\")(.+?)(?=\")").unwrap();
-
-  let mut anchor_occurrences = HashMap::<String, u32>::default();
-  for line in markdown.split("\n") {
-    if let Some(heading) = get_first_capture(line, &heading_regex) {
-      let anchor = heading_to_anchor(heading);
+pub fn extract_from_node(node: &Node, anchor_occurrences: &mut HashMap<String, u32>) {
+  match node {
+    Node::Heading(h) => {
+      let anchor = extract_from_heading(h);
       let existing_duplicates = anchor_occurrences.get(&anchor).unwrap_or(&0);
       anchor_occurrences.insert(anchor, *existing_duplicates + 1);
     }
-    if let Some(id) = get_first_capture(line, &id_regex) {
-      if !anchor_occurrences.contains_key(id) {
-        anchor_occurrences.insert(id.to_string(), 1);
-      }
+    Node::MdxJsxFlowElement(el) => {
+      if let Some(anchor) = extract_from_attributes(&el.attributes) {
+        anchor_occurrences.insert(anchor, 1);
+      };
+    }
+    Node::MdxJsxTextElement(el) => {
+      if let Some(anchor) = extract_from_attributes(&el.attributes) {
+        anchor_occurrences.insert(anchor, 1);
+      };
+    }
+    _ => (),
+  };
+}
+
+fn extract_from_attributes(attributes: &Vec<AttributeContent>) -> Option<String> {
+  for attr in attributes.iter() {
+    let AttributeContent::Property(prop) = attr else {
+      continue;
+    };
+    if prop.name != "id" {
+      continue;
+    };
+    if let Some(AttributeValue::Literal(text)) = prop.value.clone() {
+      return Some(text);
     }
   }
+  return None;
+}
 
+fn extract_from_heading(heading: &Heading) -> String {
+  let mut text = String::with_capacity(100);
+  for child in heading.children.iter() {
+    extract_text(child, &mut text);
+  }
+  heading_to_anchor(text)
+}
+
+pub fn extract_text<'a>(node: &'a Node, s: &mut String) {
+  let maybe_text = match node {
+    Node::Text(text) => Some(&text.value),
+    Node::InlineCode(text) => Some(&text.value),
+    _ => None,
+  };
+  if let Some(text) = maybe_text {
+    s.push_str(text.as_str())
+  };
+
+  if let Some(children) = node.children() {
+    for child in children {
+      extract_text(child, s);
+    }
+  }
+}
+
+pub fn deduplicate_anchors(anchor_occurrences: HashMap<String, u32>) -> Vec<String> {
   anchor_occurrences
     .into_iter()
     .flat_map(|(anchor, duplications)| {
@@ -30,9 +74,8 @@ pub fn extract_anchors_from_ref(markdown: &str) -> Vec<String> {
     .collect()
 }
 
-fn heading_to_anchor(heading: &str) -> String {
-  let heading_without_links = remove_markdown_links(heading);
-  heading_without_links
+fn heading_to_anchor(heading: String) -> String {
+  heading
     .trim()
     .to_lowercase()
     .chars()
@@ -53,20 +96,4 @@ fn heading_to_anchor(heading: &str) -> String {
       x => Some(x),
     })
     .collect()
-}
-
-fn get_first_capture<'a>(s: &'a str, r: &Regex) -> Option<&'a str> {
-  let Ok(Some(captures)) = r.captures(s) else {
-    return None;
-  };
-  Some(captures.get(1)?.as_str())
-}
-
-/// Extracts the text inside every markdown link found in `markdown`.
-///
-/// Example:
-/// "My [heading with links](/test)" -> "My heading with links"
-fn remove_markdown_links(markdown: &str) -> String {
-  let re = Regex::new(r"\[([^\[\]]+)\]\(([^)]+)\)").unwrap();
-  re.replace_all(markdown, "$1").to_string()
 }

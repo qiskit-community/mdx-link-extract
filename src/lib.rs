@@ -1,10 +1,9 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use napi::Error;
 use napi_derive::napi;
 use tokio::fs;
 
-use crate::anchors::extract_anchors_from_ref;
 use crate::notebook::extract_markdown_from_notebook_source;
 
 mod anchors;
@@ -40,24 +39,32 @@ pub async fn extract_from_file(file_path: String) -> Result<Vec<Vec<String>>, Er
     source
   };
 
-  let anchors = extract_anchors_from_ref(&markdown);
-
   let ast_root = mdx::parse_mdx(markdown)?;
 
-  let mut links = HashSet::<&String>::default();
+  let mut link_set = HashSet::<&String>::default();
+  let mut anchor_occurrences = HashMap::<String, u32>::default();
   mdx::walk_ast(&ast_root, &mut |node| {
-    links::extract_from_node(node, &mut links);
+    links::extract_from_node(node, &mut link_set);
+    anchors::extract_from_node(node, &mut anchor_occurrences);
   });
 
-  Ok(vec![links.into_iter().cloned().collect(), anchors])
+  Ok(vec![
+    link_set.into_iter().cloned().collect(),
+    anchors::deduplicate_anchors(anchor_occurrences),
+  ])
 }
 
 /// Extract anchors from a markdown string. Anchors are either:
 ///  * slugified headings, deduplicated if the same heading appears more than once
 ///  * `id` props of HTML tags. These are not deduplicated as they should be unique per file
 #[napi]
-pub fn extract_anchors(markdown: String) -> Vec<String> {
-  extract_anchors_from_ref(&markdown)
+pub fn extract_anchors(markdown: String) -> Result<Vec<String>, Error> {
+  let ast_root = mdx::parse_mdx(markdown)?;
+  let mut anchor_occurrences = HashMap::<String, u32>::default();
+  mdx::walk_ast(&ast_root, &mut |node| {
+    anchors::extract_from_node(node, &mut anchor_occurrences)
+  });
+  Ok(anchors::deduplicate_anchors(anchor_occurrences))
 }
 
 /// Extract links from a markdown string. Supports GitHub-flavored markdown
@@ -67,7 +74,7 @@ pub fn extract_links(markdown: String) -> Result<Vec<String>, Error> {
   let ast_root = mdx::parse_mdx(markdown)?;
   let mut links = HashSet::<&String>::default();
   mdx::walk_ast(&ast_root, &mut |node| {
-    links::extract_from_node(node, &mut links);
+    links::extract_from_node(node, &mut links)
   });
   Ok(links.into_iter().cloned().collect())
 }

@@ -22,6 +22,7 @@ pub fn parse_mdx(source: String) -> Result<Node, Error> {
   to_mdast(source.as_str(), &options).map_err(|message| Error::from_reason(message.to_string()))
 }
 
+/// Walk the markdown AST and call a function on each node
 pub fn walk_ast<'a>(node: &'a Node, f: &mut impl FnMut(&'a Node) -> ()) -> () {
   f(node);
 

@@ -184,11 +184,11 @@ test('extractAnchors: forbidden characters', (t) => {
 })
 
 test('extractAnchors: id tags', (t) => {
-  t.deepEqual(extractAnchors('<id="thing">'), ['#thing'])
+  t.deepEqual(extractAnchors('<span id="thing" />'), ['#thing'])
 })
 
 test('extractAnchors: duplicate id tags', (t) => {
-  t.deepEqual(extractAnchors('<id="thing">\n\n<id="thing">'), ['#thing'])
+  t.deepEqual(extractAnchors('<span id="thing" />\n\n<span id="thing" />'), ['#thing'])
 })
 
 test('extractAnchors: headings with links', (t) => {
