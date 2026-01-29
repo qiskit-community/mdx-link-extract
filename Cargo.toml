@@ -9,7 +9,6 @@ version = "0.1.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-fancy-regex = "0.17.0"
 markdown    = "1.0.0"
 napi        = { version = "3.0.0", features = ["async"] }
 napi-derive = "3.0.0"
