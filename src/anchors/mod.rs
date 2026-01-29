@@ -1,7 +1,8 @@
 use markdown::mdast::{AttributeContent, AttributeValue, Heading, Node};
 use std::collections::HashMap;
 
-/// Given any markdown node, extract the
+/// If `node` is a heading or mdx element with `id` prop, extract the heading
+/// text and add it to `anchor_occurences`
 pub fn extract_from_node(node: &Node, anchor_occurrences: &mut HashMap<String, u32>) {
   match node {
     Node::Heading(h) => {
