@@ -1,6 +1,6 @@
 {
   "name": "@qiskit/mdx-link-extract",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Fast link extraction in MDX files.",
   "main": "index.js",
   "repository": {
